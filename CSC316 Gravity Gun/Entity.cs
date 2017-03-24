@@ -12,50 +12,26 @@ namespace CSC316_Gravity_Gun
         /// <summary>
         /// The name of the entity
         /// </summary>
-        string name;
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
+        string name { get; set; }
 
         /// <summary>
         /// The position of the entity
         /// </summary>
-        Vector3 positon;
-        public Vector3 Position
-        {
-            get { return positon; }
-            set { positon = value; }
-        }
+        Vector3 positon { get; set; }
 
         /// <summary>
         /// The velocity of the entity
         /// </summary>
-        Vector3 velocity;
-        public Vector3 Velocity
-        {
-            get { return velocity; }
-            set { velocity = value; }
-        }
+        Vector3 velocity { get; set; }
 
         /// <summary>
         /// The weight of the entity
         /// </summary>
-        float weight;
-        public float Weight
-        {
-            get { return weight; }
-            set { weight = value; }
-        }
+        float weight { get; set; }
+        
         /// <summary>
         /// The strength of gravity applied to the entity
         /// </summary>
-        float gravity; 
-        public float Gravity
-        {
-            get { return gravity; }
-            set { gravity = value; }
-        }
+        float gravity { get; set; }       
     }
 }

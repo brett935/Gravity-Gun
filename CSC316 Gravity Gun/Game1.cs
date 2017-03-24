@@ -11,7 +11,7 @@ namespace CSC316_Gravity_Gun
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
+        
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
