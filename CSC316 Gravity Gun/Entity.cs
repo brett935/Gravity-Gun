@@ -30,8 +30,32 @@ namespace CSC316_Gravity_Gun
         float weight { get; set; }
         
         /// <summary>
-        /// The strength of gravity applied to the entity
+        /// The strength/direction of gravity applied to the entity
         /// </summary>
-        float gravity { get; set; }       
+        Vector3 gravity { get; set; }
+        
+        /// <summary>
+        /// Constructor for Entity
+        /// </summary>
+        /// <param name="n">Name to give the Entity</param>
+        /// <param name="p">Position to give the Entity</param>
+        /// <param name="v">Velocity to give the Entity</param>
+        public Entity(string n, Vector3 p, Vector3 v)
+        {
+            name = n;
+            positon = p;
+            velocity = v;
+            gravity = new Vector3(0, -9.81f, 0); //default strength/direction of gravity for this Entity
+        }
+        
+        /// <summary>
+        /// Updates the Entity when called
+        /// </summary>
+        /// <param name="gameTime">The game time provided by monogame</param>
+        public void Update(GameTime gameTime)
+        {
+            velocity +=  ( gravity * (float)gameTime.ElapsedGameTime.TotalSeconds ); //update velocity relative to gravity
+            positon += ( velocity * (float)gameTime.ElapsedGameTime.TotalSeconds ); //update position relative to velocity
+        }       
     }
 }
