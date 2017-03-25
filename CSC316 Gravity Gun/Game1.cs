@@ -11,7 +11,31 @@ namespace CSC316_Gravity_Gun
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        
+        /// <summary>
+        /// The model of the ground
+        /// </summary>
+        private Model floor;
+        /// <summary>
+        /// The 3D position of the camera in world space.
+        /// </summary>
+        private Vector3 cameraPosition;
+        /// <summary>
+        /// Field of View in radians
+        /// </summary>
+        private float fov;
+        /// <summary>
+        /// Camera X rotation around player
+        /// </summary>
+        private int rotationX;
+        /// <summary>
+        /// Camera Y rotation around player
+        /// </summary>
+        private int rotationY;
+        /// <summary>
+        /// Position of the player in 3D space
+        /// </summary>
+        private Vector3 playerPos;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -26,7 +50,14 @@ namespace CSC316_Gravity_Gun
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            #region camera init
+            cameraPosition = new Vector3(0, 10, -50); //initial camera position
+            fov = MathHelper.PiOver4;
+            rotationX = 0;
+            rotationY = 0;
+            #endregion
+
+            playerPos = new Vector3(0, 0, 0); //initial player position
 
             base.Initialize();
         }
@@ -40,7 +71,7 @@ namespace CSC316_Gravity_Gun
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            floor = Content.Load<Model>("floor");
         }
 
         /// <summary>
@@ -73,9 +104,17 @@ namespace CSC316_Gravity_Gun
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            #region setup graphics
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            //how we place the model in the world
+            Matrix world = Matrix.Identity;
+            //how the world relates to the camera
+            Matrix view = Matrix.CreateLookAt(Vector3.Transform(cameraPosition, Matrix.CreateRotationX(rotationX) * Matrix.CreateRotationY(rotationY)) + playerPos, playerPos, Vector3.Up);
+            Matrix projection = Matrix.CreatePerspectiveFieldOfView(fov, 1, 0.001f, 1000.0f);
+            #endregion
+
+            floor.Draw(world, view, projection); //draw the floor in the world
 
             base.Draw(gameTime);
         }
