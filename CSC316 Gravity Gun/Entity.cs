@@ -17,7 +17,7 @@ namespace CSC316_Gravity_Gun
         /// <summary>
         /// The position of the entity
         /// </summary>
-        Vector3 positon { get; set; }
+        Vector3 position { get; set; }
 
         /// <summary>
         /// The velocity of the entity
@@ -43,7 +43,7 @@ namespace CSC316_Gravity_Gun
         public Entity(string n, Vector3 p, Vector3 v)
         {
             name = n;
-            positon = p;
+            position = p;
             velocity = v;
             gravity = new Vector3(0, -9.81f, 0); //default strength/direction of gravity for this Entity
         }
@@ -55,7 +55,7 @@ namespace CSC316_Gravity_Gun
         public void Update(GameTime gameTime)
         {
             velocity +=  ( gravity * (float)gameTime.ElapsedGameTime.TotalSeconds ); //update velocity relative to gravity
-            positon += ( velocity * (float)gameTime.ElapsedGameTime.TotalSeconds ); //update position relative to velocity
+            position += ( velocity * (float)gameTime.ElapsedGameTime.TotalSeconds ); //update position relative to velocity
         }       
     }
 }
