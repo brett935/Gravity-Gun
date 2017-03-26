@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
 
 namespace CSC316_Gravity_Gun
 {
@@ -55,6 +57,14 @@ namespace CSC316_Gravity_Gun
         /// The model for an enemy character.
         /// </summary>
         private Model enemyCharacter;
+        /// <summary>
+        /// List containing all enemies in the world.
+        /// </summary>
+        private List<Entity> enemyList;
+        /// <summary>
+        /// Random number generator used for coordinates.
+        /// </summary>
+        Random random;
 
         public Game1()
         {
@@ -83,6 +93,22 @@ namespace CSC316_Gravity_Gun
             playerPos = new Vector3(0, 0, 0); //initial player position
 
             debugMode = false; //debug mode is turned off on initialization
+
+            random = new Random(); //seed random number generator
+
+            #region initialize/populate list containing enemies and objects
+            //TODO: Create Enemy class and then change the type of the enemy list from Entity to Enemy
+            enemyList = new List<Entity>();
+
+            //generate enemies for testing
+            for (int i = 0; i < 5; i++)
+            {
+                //give the enemies random coordinates
+                int randomXCoordinate = random.Next(-50, 50);
+                int randomZCoordinate = random.Next(-50, 50);
+                enemyList.Add(new Entity("testEnemy", new Vector3(randomXCoordinate, 10, randomZCoordinate), new Vector3(0, 0, 0)));
+            }
+            #endregion
 
             base.Initialize();
         }
@@ -189,11 +215,17 @@ namespace CSC316_Gravity_Gun
             Matrix projection = Matrix.CreatePerspectiveFieldOfView(fov, 1, 0.001f, 1000.0f);
             #endregion
 
-            world = Matrix.CreateScale(100);
+            world = Matrix.CreateScale(100); //scale the world for the floor
             floor.Draw(world, view, projection); //draw the floor in the world
 
-            world = Matrix.CreateScale(0.025f) * Matrix.CreateTranslation(new Vector3(0,10,0)); //scale and translate the world
-            enemyCharacter.Draw(world, view, projection); //draw an enemy
+            #region draw enemies
+            world = Matrix.CreateScale(0.025f); //scale the world to be the same for all enemies
+            foreach (Entity enemy in enemyList)
+            {
+                world *= Matrix.CreateTranslation(enemy.position); //translate the world relative to the enemy position
+                enemyCharacter.Draw(world, view, projection); //draw an enemy model
+            }
+            #endregion
 
             if (debugMode)
             {
