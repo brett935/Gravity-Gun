@@ -51,6 +51,10 @@ namespace CSC316_Gravity_Gun
         /// When true debug mode will be activated and UI information related to debugging will be displayed.
         /// </summary>
         private bool debugMode;
+        /// <summary>
+        /// The model for an enemy character.
+        /// </summary>
+        private Model enemyCharacter;
 
         public Game1()
         {
@@ -94,6 +98,7 @@ namespace CSC316_Gravity_Gun
 
             floor = Content.Load<Model>("floor");
             letterFont = Content.Load<SpriteFont>("letterfont");
+            enemyCharacter = Content.Load<Model>("cube");
         }
 
         /// <summary>
@@ -186,6 +191,9 @@ namespace CSC316_Gravity_Gun
 
             world = Matrix.CreateScale(100);
             floor.Draw(world, view, projection); //draw the floor in the world
+
+            world = Matrix.CreateScale(0.025f) * Matrix.CreateTranslation(new Vector3(0,10,0)); //scale and translate the world
+            enemyCharacter.Draw(world, view, projection); //draw an enemy
 
             if (debugMode)
             {
