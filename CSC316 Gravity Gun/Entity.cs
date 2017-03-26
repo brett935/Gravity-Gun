@@ -15,7 +15,7 @@ namespace CSC316_Gravity_Gun
         string name { get; set; }
 
         /// <summary>
-        /// The position of the entity
+        /// The position of the entity 
         /// </summary>
         Vector3 position { get; set; }
 

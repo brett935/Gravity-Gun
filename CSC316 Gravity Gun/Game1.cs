@@ -26,15 +26,23 @@ namespace CSC316_Gravity_Gun
         /// <summary>
         /// Camera X rotation around player
         /// </summary>
-        private int rotationX;
+        private float rotationX;
         /// <summary>
         /// Camera Y rotation around player
         /// </summary>
-        private int rotationY;
+        private float rotationY;
         /// <summary>
         /// Position of the player in 3D space
         /// </summary>
         private Vector3 playerPos;
+        /// <summary>
+        /// The center of the window in pixels.
+        /// </summary>
+        Point windowCenter;
+        /// <summary>
+        /// The sensitivity of the players camera
+        /// </summary>
+        float lookSensitivity;
 
         public Game1()
         {
@@ -56,6 +64,9 @@ namespace CSC316_Gravity_Gun
             rotationX = 0;
             rotationY = 0;
             #endregion
+
+            windowCenter = new Point(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2); //get window center on initialization
+            lookSensitivity = 0.01f; //set initial camera sensitivity
 
             playerPos = new Vector3(0, 0, 0); //initial player position
 
@@ -90,10 +101,56 @@ namespace CSC316_Gravity_Gun
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            #region process user input
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            Vector3 move = new Vector3(0, 0, -1); //amount to move the player
+
+            rotationY -= (Mouse.GetState().X - windowCenter.X) * lookSensitivity;
+            rotationX -= (Mouse.GetState().Y - windowCenter.Y) * lookSensitivity;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                rotationX -= 0.01f; //rotate camera up
+            else if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                rotationX += 0.01f; //rotate camera down
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                rotationY += 0.01f; //rotate camera left
+            else if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                rotationY -= 0.01f; ; //rotate camera right
+
+            //directions relative to the player
+            Vector3 forward = Vector3.Transform(move, Matrix.CreateRotationY(rotationY));
+            Vector3 backward = -forward;
+            Vector3 up = Vector3.Up;
+            Vector3 right = Vector3.Cross(forward, up);
+            Vector3 left = -right;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+                playerPos += left; //move player to the left
+            else if (Keyboard.GetState().IsKeyDown(Keys.D))
+                playerPos += right; //move player to the right
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                playerPos += forward; //move player forward
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                playerPos += backward; //move player backward
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.OemPlus))
+            {
+                fov = MathHelper.Clamp(fov + MathHelper.ToRadians(1), 0.1f, MathHelper.Pi - 0.1f); //increase field of view
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
+            {
+                fov = MathHelper.Clamp(fov - MathHelper.ToRadians(1), 0.1f, MathHelper.Pi - 0.1f); //decrease field of view
+            }
+            //Vector3 playerForward = Vector3.Backward;
+            //playerForward = Vector3.Transform(playerForward, Matrix.CreateRotationX(rotationX) * Matrix.CreateRotationY(rotationY));
+            #endregion
+
+            Mouse.SetPosition(windowCenter.X, windowCenter.Y); //center the mouse in the game window (fixes camera rotating uncontrollably)
 
             base.Update(gameTime);
         }
@@ -114,6 +171,7 @@ namespace CSC316_Gravity_Gun
             Matrix projection = Matrix.CreatePerspectiveFieldOfView(fov, 1, 0.001f, 1000.0f);
             #endregion
 
+            world = Matrix.CreateScale(100);
             floor.Draw(world, view, projection); //draw the floor in the world
 
             base.Draw(gameTime);
