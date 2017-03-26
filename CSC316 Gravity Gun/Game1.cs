@@ -196,6 +196,13 @@ namespace CSC316_Gravity_Gun
 
             Mouse.SetPosition(windowCenter.X, windowCenter.Y); //center the mouse in the game window (fixes camera rotating uncontrollably)
 
+            #region update enemies
+            foreach (Entity enemy in enemyList)
+            {
+                enemy.Update(gameTime); //update each enemy
+            }
+            #endregion
+
             base.Update(gameTime);
         }
 
