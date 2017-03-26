@@ -43,6 +43,14 @@ namespace CSC316_Gravity_Gun
         /// The sensitivity of the players camera
         /// </summary>
         float lookSensitivity;
+        /// <summary>
+        /// The font used to draw 2D text to the screen.
+        /// </summary>
+        SpriteFont letterFont;
+        /// <summary>
+        /// When true debug mode will be activated and UI information related to debugging will be displayed.
+        /// </summary>
+        private bool debugMode;
 
         public Game1()
         {
@@ -70,6 +78,8 @@ namespace CSC316_Gravity_Gun
 
             playerPos = new Vector3(0, 0, 0); //initial player position
 
+            debugMode = false; //debug mode is turned off on initialization
+
             base.Initialize();
         }
 
@@ -83,6 +93,7 @@ namespace CSC316_Gravity_Gun
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             floor = Content.Load<Model>("floor");
+            letterFont = Content.Load<SpriteFont>("letterfont");
         }
 
         /// <summary>
@@ -146,8 +157,10 @@ namespace CSC316_Gravity_Gun
             {
                 fov = MathHelper.Clamp(fov - MathHelper.ToRadians(1), 0.1f, MathHelper.Pi - 0.1f); //decrease field of view
             }
-            //Vector3 playerForward = Vector3.Backward;
-            //playerForward = Vector3.Transform(playerForward, Matrix.CreateRotationX(rotationX) * Matrix.CreateRotationY(rotationY));
+            if (Keyboard.GetState().IsKeyDown(Keys.F2))
+            {
+                debugMode = !debugMode; //toggle debug mode and show/hide debugging content
+            }
             #endregion
 
             Mouse.SetPosition(windowCenter.X, windowCenter.Y); //center the mouse in the game window (fixes camera rotating uncontrollably)
@@ -173,6 +186,26 @@ namespace CSC316_Gravity_Gun
 
             world = Matrix.CreateScale(100);
             floor.Draw(world, view, projection); //draw the floor in the world
+
+            if (debugMode)
+            {
+                #region draw UI display
+                spriteBatch.Begin();
+
+                string text = "Debugging Activated \nX: " + playerPos.X.ToString() + "\nZ: " + playerPos.Z.ToString(); //text to draw to UI
+            
+                Vector2 UIPosition = new Vector2(30, 30); //position of user interface on 2D screen
+                spriteBatch.DrawString(letterFont, text, UIPosition, Color.Green, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+
+                spriteBatch.End();
+                #endregion
+                #region reset graphics device after using spriteBatch
+                GraphicsDevice.BlendState = BlendState.Opaque;
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+                #endregion
+            }
+            
 
             base.Draw(gameTime);
         }

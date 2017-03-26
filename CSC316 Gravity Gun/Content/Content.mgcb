@@ -32,3 +32,9 @@
 /processorParam:TextureFormat=DxtCompressed
 /build:floor.fbx
 
+#begin letterfont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:letterfont.spritefont
+
