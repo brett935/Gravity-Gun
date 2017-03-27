@@ -33,7 +33,17 @@ namespace CSC316_Gravity_Gun
         /// The strength/direction of gravity applied to the entity
         /// </summary>
         Vector3 gravity { get; set; }
-        
+
+        /// <summary>
+        /// The strength/direction of the temporary gravity
+        /// </summary>
+        Vector3 effectGravity { get; set; }
+
+        /// <summary>
+        /// Amount of time in milliseconds that an effect last on an Entity
+        /// </summary>
+        float effectDuration { get; set; }
+
         /// <summary>
         /// Constructor for Entity
         /// </summary>
@@ -46,6 +56,8 @@ namespace CSC316_Gravity_Gun
             position = p;
             velocity = v;
             gravity = new Vector3(0, -9.81f, 0); //default strength/direction of gravity for this Entity
+            effectDuration = 0;
+            effectGravity = new Vector3(0, 0, 0);
         }
         
         /// <summary>
@@ -54,8 +66,30 @@ namespace CSC316_Gravity_Gun
         /// <param name="gameTime">The game time provided by monogame</param>
         public void Update(GameTime gameTime)
         {
-            velocity +=  ( gravity * (float)gameTime.ElapsedGameTime.TotalSeconds ); //update velocity relative to gravity
-            position += ( velocity * (float)gameTime.ElapsedGameTime.TotalSeconds ); //update position relative to velocity
+            //if temporary gravity effect is being applied
+            if(effectDuration > 0)
+            {
+                velocity += (effectGravity * (float)gameTime.ElapsedGameTime.TotalSeconds); //update velocity relative to temporary gravity effect
+                position += (velocity * (float)gameTime.ElapsedGameTime.TotalSeconds); //update position relative to velocity
+                effectDuration -= (float)gameTime.ElapsedGameTime.TotalMilliseconds; //decrement effect time by elapsed time since last update
+            }
+            //if using default gravity
+            else
+            {
+                velocity += (gravity * (float)gameTime.ElapsedGameTime.TotalSeconds); //update velocity relative to gravity
+                position += (velocity * (float)gameTime.ElapsedGameTime.TotalSeconds); //update position relative to velocity
+            }
+        }
+        
+        /// <summary>
+        /// Temporarily changes an entity's gravity vector.
+        /// </summary>
+        /// <param name="v">The temporary gravity vector</param>
+        /// <param name="d">The time to use the gravity vector for (milliseconds)</param>
+        public void applyGravityEffect(Vector3 v, float d)
+        {
+            effectGravity = v;
+            effectDuration = d;
         }       
     }
 }
