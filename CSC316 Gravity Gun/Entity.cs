@@ -45,6 +45,19 @@ namespace CSC316_Gravity_Gun
         float effectDuration { get; set; }
 
         /// <summary>
+        /// Default constructor (places objects at the origin with no velocity and no gravity
+        /// </summary>
+        public Entity()
+        {
+            name = "";
+            position = new Vector3(0, 0, 0);
+            velocity = new Vector3(0, 0, 0);
+            gravity = new Vector3(0, 0, 0);
+            effectDuration = 0;
+            effectGravity = new Vector3(0, 0, 0);
+        }
+
+        /// <summary>
         /// Constructor for Entity
         /// </summary>
         /// <param name="n">Name to give the Entity</param>
