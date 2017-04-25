@@ -22,7 +22,7 @@ namespace CSC316_Gravity_Gun
         /// <summary>
         /// The velocity of the Entity
         /// </summary>
-        Vector3 velocity { get; set; }
+        public Vector3 velocity { get; set; }
 
         /// <summary>
         /// The weight of the Entity

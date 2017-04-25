@@ -65,6 +65,14 @@ namespace CSC316_Gravity_Gun
         /// Random number generator used for coordinates.
         /// </summary>
         Random random;
+        /// <summary>
+        /// List containing terrain and non-living objects
+        /// </summary>
+        private List<Entity> landscapeList;
+        /// <summary>
+        /// A stationary landscape model
+        /// </summary>
+        private Model landscape;
 
         public Game1()
         {
@@ -106,7 +114,18 @@ namespace CSC316_Gravity_Gun
                 //give the enemies random coordinates
                 int randomXCoordinate = random.Next(-50, 50);
                 int randomZCoordinate = random.Next(-50, 50);
-                enemyList.Add(new Entity("testEnemy", new Vector3(randomXCoordinate, 10, randomZCoordinate), new Vector3(0, 0, 0)));
+                //enemyList.Add(new Entity("testEnemy", new Vector3(randomXCoordinate, 10, randomZCoordinate), new Vector3(0, 0, 0)));
+            }
+            #endregion
+
+            #region initialize/populate landscape list
+            landscapeList = new List<Entity>();
+
+            //generate terrain for testing
+            for (int i = 0; i < 5; i=i+20)
+            {
+                //give the landscape semi-random coordinates
+                landscapeList.Add(new Entity("tile", new Vector3(i+5, i+5, i+5), new Vector3(0, 0, 0)));
             }
             #endregion
 
@@ -125,6 +144,7 @@ namespace CSC316_Gravity_Gun
             floor = Content.Load<Model>("floor");
             letterFont = Content.Load<SpriteFont>("letterfont");
             enemyCharacter = Content.Load<Model>("cube");
+            landscape = Content.Load<Model>("landscapeCube");
         }
 
         /// <summary>
@@ -200,6 +220,30 @@ namespace CSC316_Gravity_Gun
             foreach (Entity enemy in enemyList)
             {
                 enemy.Update(gameTime); //update each enemy
+
+                float colliderRadius = landscape.Meshes[0].BoundingSphere.Radius; //radius of terrains bounding sphere
+                if (enemy.position.Y < (0 + colliderRadius)) //check for collision with the floor
+                {
+                    enemy.position = new Vector3(enemy.position.X, colliderRadius, enemy.position.Z); //fix position (place the object touching the correct surface)
+                    float bounce = 1f; //multiplier for direction change
+                    enemy.velocity = bounce * Vector3.Dot(-enemy.velocity, Vector3.Up) * Vector3.Up + enemy.velocity; //fix velocity 2* (-V dot N) * N + V
+                }
+
+            }
+            #endregion
+
+            #region update landscape
+            foreach (Entity terrain in landscapeList)
+            {
+                terrain.Update(gameTime); //update each terrain
+                 
+                float colliderRadius = landscape.Meshes[0].BoundingSphere.Radius; //radius of terrains bounding sphere
+                if (terrain.position.Y < (0 + colliderRadius) ) //check for collision with the floor
+                {
+                    terrain.position = new Vector3(terrain.position.X, colliderRadius, terrain.position.Z); //fix position (place the object touching the correct surface)
+                    float bounce = 1f; //multiplier for direction change
+                    terrain.velocity = bounce * Vector3.Dot(-terrain.velocity, Vector3.Up) * Vector3.Up + terrain.velocity; //fix velocity 2* (-V dot N) * N + V
+                }
             }
             #endregion
 
@@ -231,6 +275,17 @@ namespace CSC316_Gravity_Gun
             {
                 world *= Matrix.CreateTranslation(enemy.position); //translate the world relative to the enemy position
                 enemyCharacter.Draw(world, view, projection); //draw an enemy model
+            }
+            #endregion
+
+            #region draw entities (landscape)
+            //world = Matrix.CreateScale(0.025f); //scale the world the same for all landscape
+            foreach (Entity terrain in landscapeList)
+            {
+                //TODO: Draw different types of landscape here
+                //System.Diagnostics.Debug.WriteLine("Draw landscape object.");
+                world *= Matrix.CreateTranslation(terrain.position); //translate the world relative to the landscape position
+                landscape.Draw(world, view, projection); //draw landscape model
             }
             #endregion
 
